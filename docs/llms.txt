@@ -1,0 +1,18 @@
+# gmail-mcp
+
+> gmail-mcp is a private, local MCP server for Claude Code, made by Shinzuu, that does in Gmail what a person does by hand: search, read, draft, send, reply, forward, labels, filters, vacation reply, signatures and other settings, across several Gmail accounts. It runs on the user's own Google OAuth client. There is no default account: every call names one, every change states why that account, and accounts on a block list are refused. Every change waits for approval in the MCP client's own prompt. Messages are built locally, with links exactly as written and no tracking. The source is not public; it is available from the author on request.
+
+Counted: 40 Gmail actions (10 read, 7 write, 9 organise, 9 settings, 5 accounts), 203 automated tests, 0 default accounts, 0 retries on a send.
+
+## Install with an agent
+
+- [Agent setup page](https://shinzuu.github.io/gmail-mcp-showcase/agent-setup.html): what the setup prompt does, what the agent asks the human, and safety notes
+- [Agent setup prompt (raw)](https://shinzuu.github.io/gmail-mcp-showcase/agent-setup-prompt.md): paste into Claude Code; it guides the human through their own OAuth client, registers the server from a local folder, logs in one account and sends one approved test email
+
+## Docs
+
+- [Website](https://shinzuu.github.io/gmail-mcp-showcase/): overview with the server's real approval text and message output on invented accounts
+
+## Optional
+
+- Source code: available on request from the author

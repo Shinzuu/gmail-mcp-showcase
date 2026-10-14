@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gmail-mcp · Gmail for Claude Code, several accounts</title>
+<meta name="description" content="gmail-mcp lets Claude Code search, read, write, file and change settings across several Gmail accounts. Every change waits for your approval, each one names the account and why, and links go out exactly as written.">
+<meta name="author" content="Shinzuu">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1a19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="gmail-mcp">
+<meta property="og:title" content="gmail-mcp: every send names the account, and why.">
+<meta property="og:description" content="Gmail for Claude Code across several accounts. 40 actions, one approval per change, no default account.">
+<meta property="og:url" content="https://shinzuu.github.io/gmail-mcp-showcase/">
+<meta property="og:image" content="https://shinzuu.github.io/gmail-mcp-showcase/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="gmail-mcp: every send names the account, and why.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shinzuu.github.io/gmail-mcp-showcase/og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500..800;1,6..96,500..700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>try{var t=localStorage.getItem("gm-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{
+  --bg:#f6f4ef; --bg-2:#ece8df; --card:#fffdf8; --ink:#10201f; --ink-2:#3d4c4a; --ink-3:#5d6b68; --rule:#d9d4c7;
+  --teal:#0f6b63; --teal-deep:#0f3d3a; --amber:#b86e00; --amber-wash:#fff0d2; --dark:#101c1c;
+  --display:"Bodoni Moda",Didot,Georgia,serif; --sans:"Public Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.16,1,.3,1); --g:16px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1a19;--bg-2:#11221f;--card:#132624;--ink:#eee9de;--ink-2:#bfc8c4;--ink-3:#93a29e;--rule:#253836;--teal:#5fd3c4;--amber:#ffb547;--amber-wash:#2c2310;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1a19;--bg-2:#11221f;--card:#132624;--ink:#eee9de;--ink-2:#bfc8c4;--ink-3:#93a29e;--rule:#253836;--teal:#5fd3c4;--amber:#ffb547;--amber-wash:#2c2310;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:64px;scrollbar-color:var(--rule) var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+::selection{background:var(--teal);color:#fff}
+h1,h2,h3,p,ul,ol,dl,dd,figure{margin:0} ul,ol{padding:0;list-style:none}
+a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:4px}
+img{display:block;max-width:100%;height:auto}
+code{font-family:var(--mono);font-size:.9em}
+.wrap{width:100%;max-width:74rem;margin-inline:auto;padding-inline:var(--g)}
+@media (min-width:900px){:root{--g:40px}}
+.skip{position:absolute;left:var(--g);top:-4rem;background:var(--ink);color:var(--bg);padding:.5rem .8rem;z-index:20}.skip:focus{top:.6rem}
+
+.nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
+.nav .wrap{display:flex;align-items:center;gap:1rem;min-height:58px}
+.brand{display:flex;align-items:center;gap:.55rem;text-decoration:none;font:700 1.3rem/1 var(--display);min-height:44px}
+.brand img{width:28px;height:28px}
+.nav-links{display:none;margin-left:auto;gap:1.4rem;font-size:.93rem;color:var(--ink-2)}
+.nav-links a{text-decoration:none}.nav-links a:hover{color:var(--ink)}
+@media (min-width:860px){.nav-links{display:flex}}
+.nav-cta{margin-left:auto;display:flex;gap:.5rem;align-items:center}
+@media (min-width:860px){.nav-cta{margin-left:1.4rem}}
+.theme{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer}
+.theme svg{grid-area:1/1;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;transition:opacity .25s,transform .4s var(--ease)}
+.theme .moon{opacity:0;transform:scale(.6)}
+:root[data-theme="dark"] .theme .sun{opacity:0;transform:scale(.6)}:root[data-theme="dark"] .theme .moon{opacity:1;transform:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .theme .sun{opacity:0;transform:scale(.6)}:root:not([data-theme="light"]) .theme .moon{opacity:1;transform:none}}
+.btn{display:inline-flex;align-items:center;gap:.5rem;min-height:48px;padding:0 1.25rem;border-radius:10px;font:600 .98rem/1 var(--sans);text-decoration:none;border:1px solid var(--rule);transition:transform .3s var(--ease),background-color .2s}
+.btn-teal{background:var(--teal-deep);color:#f6f4ef;border-color:var(--teal-deep)}
+:root[data-theme="dark"] .btn-teal{background:var(--teal);color:#0c1a19;border-color:var(--teal)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn-teal{background:var(--teal);color:#0c1a19;border-color:var(--teal)}}
+.btn-teal:hover{transform:translateY(-1px)}
+.btn-line:hover{background:var(--card)}
+.nav .btn{min-height:40px;padding:0 .9rem;font-size:.9rem;display:none}
+@media (min-width:520px){.nav .btn{display:inline-flex}}
+
+/* hero */
+.hero{padding-block:clamp(3rem,9vw,6rem) 0;display:grid;gap:2.5rem;align-items:start}
+@media (min-width:1040px){.hero{grid-template-columns:.95fr 1.05fr;gap:3.5rem}}
+.hero h1{font:600 clamp(2.8rem,8vw,5.8rem)/.95 var(--display);font-variation-settings:"opsz" 96;letter-spacing:-.02em;text-wrap:balance}
+.hero h1 i{font-weight:500;color:var(--teal)}
+.hero .sub{margin-top:1.5rem;max-width:34rem;font-size:1.18rem;color:var(--ink-2);text-wrap:pretty}
+.ctas{margin-top:1.9rem;display:flex;flex-wrap:wrap;gap:.7rem}
+.facts{margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.3rem 1.3rem;font:400 .85rem/1.4 var(--mono);color:var(--ink-3)}
+.envelope{position:relative}
+.envelope img{border-radius:12px;box-shadow:0 30px 60px -34px rgb(8 22 21 / .65)}
+.envelope figcaption{margin-top:.9rem;font-size:.85rem;color:var(--ink-3)}
+.postmark{position:absolute;z-index:2;top:-22px;right:6px;width:104px;height:104px;border-radius:50%;border:2px solid var(--amber);display:grid;place-items:center;text-align:center;font:500 .66rem/1.25 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--amber);transform:rotate(12deg);background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.postmark b{display:block;font:700 1.35rem/1 var(--display);letter-spacing:0;text-transform:none}
+@media (max-width:520px){.postmark{width:84px;height:84px;top:-18px;right:4px}.postmark b{font-size:1.1rem}}
+
+/* sections */
+.sec{padding-top:clamp(5rem,12vw,8rem)}
+.sec-head{display:grid;gap:1rem;margin-bottom:2.4rem}
+@media (min-width:900px){.sec-head{grid-template-columns:1fr 1fr;gap:3rem;align-items:end}}
+.sec h2{font:600 clamp(2.2rem,5.6vw,3.9rem)/1 var(--display);font-variation-settings:"opsz" 72;letter-spacing:-.015em;text-wrap:balance}
+.sec h2 i{font-weight:500;color:var(--teal)}
+.sec-head p{color:var(--ink-2);max-width:34rem}
+
+/* accounts */
+.accts{display:grid;gap:1rem}
+@media (min-width:860px){.accts{grid-template-columns:repeat(3,1fr)}}
+.acct{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:1.3rem 1.3rem 1.4rem;display:grid;gap:.5rem;align-content:start;position:relative;overflow:hidden}
+.acct .lbl{font:500 .75rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.acct h3{font:600 1.5rem/1.15 var(--display)}
+.acct p{color:var(--ink-2);font-size:.96rem}
+.acct .purpose{font:400 .9rem/1.45 var(--mono);color:var(--teal);background:var(--bg-2);padding:.5rem .6rem;border-radius:8px}
+.acct.blocked{border-style:dashed;border-color:var(--amber)}
+.acct.blocked h3{text-decoration:line-through;text-decoration-color:var(--amber);text-decoration-thickness:2px}
+.acct.blocked .purpose{color:var(--amber);background:var(--amber-wash)}
+.note{margin-top:1rem;font-size:.85rem;color:var(--ink-3)}
+
+/* split explain */
+.split{display:grid;gap:2rem;align-items:start}
+@media (min-width:1000px){.split{grid-template-columns:1.2fr .8fr;gap:3rem}}
+.split img{border-radius:12px;box-shadow:0 24px 50px -34px rgb(8 22 21 / .5)}
+.split figcaption{margin-top:.8rem;font-size:.85rem;color:var(--ink-3)}
+.points{display:grid;gap:1.3rem}
+.points div{border-top:1px solid var(--ink);padding-top:.9rem}
+.points h3{font:600 1.35rem/1.2 var(--display);margin-bottom:.35rem}
+.points p{color:var(--ink-2);font-size:.98rem}
+
+/* actions */
+.groups{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:16px;overflow:hidden}
+@media (min-width:760px){.groups{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1100px){.groups{grid-template-columns:repeat(5,1fr)}}
+.group{background:var(--card);padding:1.3rem 1.2rem 1.4rem;display:grid;gap:.6rem;align-content:start}
+.group .n{font:700 2.8rem/1 var(--display);color:var(--teal)}
+.group h3{font:600 1.15rem/1.2 var(--sans)}
+.group p{font-size:.92rem;color:var(--ink-2)}
+.group .gate{justify-self:start;font:500 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:.3rem .45rem;border-radius:6px;border:1px solid currentColor;color:var(--amber)}
+.group .gate.none{color:var(--ink-3)}
+
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--ink)}
+@media (min-width:860px){.nums{grid-template-columns:repeat(4,1fr)}}
+.nums div{padding:1.3rem 1rem 1.4rem 0;border-bottom:1px solid var(--rule)}
+.nums dt{font:600 clamp(3rem,8vw,5rem)/.95 var(--display);font-variation-settings:"opsz" 96;font-variant-numeric:lining-nums}
+.nums dd{margin-top:.5rem;font-size:.92rem;color:var(--ink-2);max-width:15rem}
+
+/* setup */
+.setup{display:grid;gap:2rem}
+@media (min-width:980px){.setup{grid-template-columns:1fr 1fr;gap:3rem}}
+.needs{border-top:1px solid var(--ink)}
+.needs li{padding:1rem 0;border-bottom:1px solid var(--rule);display:grid;gap:.15rem}
+.needs b{font-weight:600}.needs span{color:var(--ink-2);font-size:.96rem}
+.agentbox{background:var(--teal-deep);color:#e6efec;border-radius:18px;padding:clamp(1.4rem,4vw,2.2rem);display:grid;gap:1.1rem;align-content:start}
+.agentbox h3{font:600 clamp(1.9rem,4.4vw,2.6rem)/1 var(--display);color:#fff}
+.agentbox p{color:#b4cbc6}
+.agentbox pre{margin:0;background:#0a2422;border:1px solid #1f4a46;border-radius:10px;padding:1rem;font:400 .84rem/1.7 var(--mono);white-space:pre-wrap}
+.agentbox pre i{font-style:normal;color:#ffb547}
+.agentbox .btn{background:#ffb547;color:#10201f;border-color:#ffb547}
+.onreq{margin-top:1rem;font:400 .85rem/1.4 var(--mono);color:var(--ink-3)}
+
+.faq{border-top:1px solid var(--ink)}
+.faq details{border-bottom:1px solid var(--rule)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:60px;padding:.6rem 0;font:600 1.3rem/1.25 var(--display)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";width:10px;height:10px;flex:none;border-right:1.5px solid var(--ink-3);border-bottom:1.5px solid var(--ink-3);transform:rotate(45deg);transition:transform .3s var(--ease)}
+.faq details[open] summary::after{transform:rotate(225deg)}
+.faq details p{padding-bottom:1.2rem;color:var(--ink-2);max-width:46rem}
+
+.closing{padding-block:clamp(6rem,14vw,10rem) clamp(3rem,8vw,5rem);text-align:center;display:grid;justify-items:center;gap:1.8rem}
+.closing h2{font:600 clamp(2.6rem,8vw,5.6rem)/.98 var(--display);font-variation-settings:"opsz" 96;letter-spacing:-.02em;max-width:16ch}
+.closing h2 i{font-weight:500;color:var(--teal)}
+footer{border-top:1px solid var(--rule);padding-block:1.6rem 2.4rem;font-size:.88rem;color:var(--ink-3)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem}
+footer .fwho{margin-right:auto}
+footer a{color:var(--ink-2)}
+
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes stampin{0%{opacity:0;transform:rotate(30deg) scale(1.6)}100%{opacity:1;transform:rotate(12deg) scale(1)}}
+.hero h1{animation:rise .9s var(--ease) both}
+.envelope img{animation:rise 1s .15s var(--ease) both}
+.postmark{animation:stampin .6s .8s var(--ease) both}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="icon.svg" alt="" width="28" height="28">gmail-mcp</a>
+    <nav class="nav-links" aria-label="Sections"><a href="#accounts">Accounts</a><a href="#approval">Approval</a><a href="#links">Clean mail</a><a href="#actions">Actions</a><a href="#setup">Setup</a></nav>
+    <div class="nav-cta"><a class="btn btn-teal" href="agent-setup.html">Agent setup</a>
+    <button class="theme" type="button" aria-label="Switch to dark theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"/></svg></button></div>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero wrap" aria-labelledby="hero-title">
+  <div>
+    <h1 id="hero-title">Every send names the account, <i>and why.</i></h1>
+    <p class="sub">gmail-mcp lets Claude Code do in Gmail what you would do by hand: search, read, write, reply, forward, file and change settings, across several accounts. Every change waits for your approval in Claude Code's own prompt.</p>
+    <div class="ctas"><a class="btn btn-teal" href="agent-setup.html">Set up with your AI agent</a><a class="btn btn-line" href="#approval">See the approval</a></div>
+    <p class="facts"><span>40 actions</span><span>203 tests</span><span>your own Google client</span><span>by Shinzuu</span></p>
+  </div>
+  <figure class="envelope">
+    <span class="postmark" aria-hidden="true"><span><b>1</b>approval<br>per change</span></span>
+    <img src="img/approval.png" width="1764" height="1182" alt="The approval text for an invented email: the sending account, recipient marked external, subject, one link, one inline image, one attachment, the reason this account was chosen, the full text of the body and every link it contains, then a yes or no question.">
+    <figcaption>The approval text is the tool's real output for an invented invoice email. The yes/no box is drawn to show where Claude Code asks.</figcaption>
+  </figure>
+</section>
+
+<section class="sec wrap" id="accounts" aria-labelledby="acct-title">
+  <div class="sec-head"><h2 id="acct-title">No default account. <i>Ever.</i></h2><p>Every call names its account. Each account carries a purpose you wrote, so Claude picks by purpose and says which rule it followed.</p></div>
+  <div class="accts">
+    <div class="acct"><span class="lbl">Account 1</span><h3>Billing</h3><p class="purpose">invoices and payment questions</p><p>Invoice replies go out from here, and the prompt says so.</p></div>
+    <div class="acct"><span class="lbl">Account 2</span><h3>Day to day</h3><p class="purpose">day-to-day client mail</p><p>Everything else with clients. Each search names the account it runs in.</p></div>
+    <div class="acct blocked"><span class="lbl">Block list</span><h3>Owner's inbox</h3><p class="purpose">never used, whatever the request</p><p>Refused before anything is read. A login that comes back as this account is revoked and nothing is saved.</p></div>
+  </div>
+  <p class="note">Invented accounts. A blocked account in the same test run returned the error "blocked account".</p>
+</section>
+
+<section class="sec wrap" id="approval" aria-labelledby="ap-title">
+  <div class="sec-head"><h2 id="ap-title">One prompt for each change, <i>written for you</i></h2><p>Sends, replies, deletes, label changes, drafts, filters and settings all wait. The prompt comes from the MCP client, so the model can never answer it for itself.</p></div>
+  <div class="split">
+    <figure><img src="img/approval.png" width="1764" height="1182" alt="The same approval text, showing the order of the facts: account and action first, then recipient, subject, links and attachments, then the reason and the body."><figcaption>The first lines carry the account, the action and who it goes to, because Claude Code folds long prompts after four lines.</figcaption></figure>
+    <div class="points">
+      <div><h3>The account and the reason</h3><p>Line one names the account. A later line says why that account, in the words you gave it.</p></div>
+      <div><h3>External recipients marked</h3><p>Anyone outside the sending account's domain is labelled external.</p></div>
+      <div><h3>Every link listed</h3><p>The prompt counts the links and prints each one, so a link text cannot hide a different address.</p></div>
+      <div><h3>Decline means nothing happened</h3><p>No, cancel, a timeout, or a client that cannot show prompts: no change is made.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="links" aria-labelledby="link-title">
+  <div class="sec-head"><h2 id="link-title">Links go out <i>exactly as written</i></h2><p>Messages are built on your machine. Inline images, attachments and links arrive as you wrote them, with no tracking pixel and no redirect wrapper.</p></div>
+  <figure class="split" style="grid-template-columns:1fr"><img src="img/mime.png" width="1764" height="558" alt="The HTML part of the invented invoice email as it was handed to Gmail: the link's href is the payment address exactly as typed, and the image refers to an inline attachment."><figcaption>The HTML part of the same invented email, decoded from what the server passed to Gmail. The href is the address that was typed.</figcaption></figure>
+</section>
+
+<section class="sec wrap" id="actions" aria-labelledby="act-title">
+  <div class="sec-head"><h2 id="act-title">Forty actions, <i>in five groups</i></h2><p>What a person does in Gmail by hand. Nothing runs on a schedule: no watching, polling or push.</p></div>
+  <div class="groups">
+    <div class="group"><span class="n">10</span><h3>Read</h3><p>Search, messages, threads, drafts, labels, filters, settings, attachments.</p><span class="gate none">no prompt</span></div>
+    <div class="group"><span class="n">7</span><h3>Write</h3><p>Send, reply, forward, and create, update, send or delete drafts.</p><span class="gate">approval</span></div>
+    <div class="group"><span class="n">9</span><h3>Organise</h3><p>Labels, filters, trash, restore and permanent delete.</p><span class="gate">approval</span></div>
+    <div class="group"><span class="n">9</span><h3>Settings</h3><p>Vacation reply, signature, forwarding, send-as, IMAP, POP and language.</p><span class="gate">approval</span></div>
+    <div class="group"><span class="n">5</span><h3>Accounts</h3><p>List, log in, check login, log out, and set an account's purpose.</p><span class="gate">purpose and logout need approval</span></div>
+  </div>
+</section>
+
+<section class="sec wrap" aria-labelledby="num-title">
+  <div class="sec-head"><h2 id="num-title">Counted</h2><p>From the tool list and a run of the test suite.</p></div>
+  <dl class="nums">
+    <div><dt>40</dt><dd>Gmail actions</dd></div>
+    <div><dt>203</dt><dd>automated tests</dd></div>
+    <div><dt>0</dt><dd>default accounts</dd></div>
+    <div><dt>0</dt><dd>retries on a send, so nothing goes out twice</dd></div>
+  </dl>
+</section>
+
+<section class="sec wrap" id="setup" aria-labelledby="setup-title">
+  <div class="sec-head"><h2 id="setup-title">What setup <i>looks like</i></h2><p>It runs on your machine with your own Google OAuth client. Nothing is hosted or shared.</p></div>
+  <div class="setup">
+    <div>
+      <ul class="needs">
+        <li><b>Claude Code</b><span>The server registers with it, and its prompts carry the approvals.</span></li>
+        <li><b>Node.js 26 or later</b><span>It runs its sources directly, with no build step.</span></li>
+        <li><b>Your own Google Cloud OAuth client</b><span>A free project you own. The folder has a step-by-step guide.</span></li>
+        <li><b>A keyring, or private files</b><span>Refresh tokens go in the system keyring on Linux, or in files only you can read.</span></li>
+        <li><b>The gmail-mcp folder</b><span>The server, a skill for Claude, and the setup guide.</span></li>
+      </ul>
+      <p class="onreq">Source available on request.</p>
+    </div>
+    <div class="agentbox">
+      <h3>Set up with your AI agent</h3>
+      <p>Paste one prompt into Claude Code. It walks you through the Google Cloud steps, registers the server, logs in your first account in the right browser profile, and sends you one test email, which you approve.</p>
+<pre><i>›</i> check Node and the keyring
+<i>›</i> walk you through your OAuth client
+<i>›</i> install and register the server
+<i>›</i> log in one account, set its purpose
+<i>›</i> test: one email to yourself, approved by you</pre>
+      <div><a class="btn" href="agent-setup.html">Get the setup prompt</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="faq" aria-labelledby="faq-title">
+  <div class="sec-head"><h2 id="faq-title">Questions</h2></div>
+  <div class="faq">
+    <details><summary>Can Claude approve a send for itself?</summary><p>No. The approval is a prompt shown by the MCP client, which the model never sees or answers. On newer clients the approval is also tied to the exact prompt text that was shown.</p></details>
+    <details><summary>What if I ask it to use the wrong account?</summary><p>The prompt names the account and the reason before anything happens, so you can say no. Accounts on the block list are refused whatever you ask.</p></details>
+    <details><summary>Does it read my mail in the background?</summary><p>No. There is no watching, polling, push or schedule. It acts only when you ask.</p></details>
+    <details><summary>Where are my tokens?</summary><p>In the system keyring by default, encrypted at rest and unlocked with your session, or in files only you can read on systems without one.</p></details>
+    <details><summary>Can mail content trick it?</summary><p>Every read result is labelled as untrusted content, and any change it might suggest still needs your approval.</p></details>
+  </div>
+</section>
+
+<section class="closing wrap" aria-labelledby="closing-title">
+  <h2 id="closing-title">Right account. <i>Your yes.</i> Exact links.</h2>
+  <a class="btn btn-teal" href="agent-setup.html">Set up with your AI agent</a>
+</section>
+</main>
+<footer><div class="wrap"><span class="fwho">gmail-mcp · built by Shinzuu · source available on request</span><a href="agent-setup.html">Agent setup</a><a href="llms.txt">llms.txt</a></div></footer>
+<script>
+(function(){var b=document.querySelector(".theme"),r=document.documentElement,m=matchMedia("(prefers-color-scheme: dark)");
+function cur(){return r.dataset.theme||(m.matches?"dark":"light")}
+function lab(){b.setAttribute("aria-label",cur()==="dark"?"Switch to light theme":"Switch to dark theme")}
+b.addEventListener("click",function(){var n=cur()==="dark"?"light":"dark";r.dataset.theme=n;try{localStorage.setItem("gm-theme",n)}catch(e){}lab()});m.addEventListener("change",lab);lab()})();
+</script>
+</body>
+</html>
